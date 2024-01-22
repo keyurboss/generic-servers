@@ -1,0 +1,67 @@
+{
+  "name": "generic-servers",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/generic-servers/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/generic-servers",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "apps/generic-servers/src/main.ts",
+        "tsConfig": "apps/generic-servers/tsconfig.app.json",
+        "assets": ["apps/generic-servers/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "generic-servers:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "generic-servers:build:development"
+        },
+        "production": {
+          "buildTarget": "generic-servers:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/generic-servers/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}
