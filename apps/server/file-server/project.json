@@ -1,7 +1,7 @@
 {
-  "name": "generic-servers",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/generic-servers/src",
+  "name": "FileServer",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/server/file-server/src",
   "projectType": "application",
   "targets": {
     "build": {
@@ -10,12 +10,15 @@
       "defaultConfiguration": "production",
       "options": {
         "platform": "node",
-        "outputPath": "dist/apps/generic-servers",
+        "outputPath": "dist/apps/server/file-server",
         "format": ["cjs"],
         "bundle": false,
-        "main": "apps/generic-servers/src/main.ts",
-        "tsConfig": "apps/generic-servers/tsconfig.app.json",
-        "assets": ["apps/generic-servers/src/assets"],
+        "main": "apps/server/file-server/src/main.ts",
+        "tsConfig": "apps/server/file-server/tsconfig.app.json",
+        "assets": [
+          "apps/server/file-server/src/assets",
+          "apps/server/file-server/src/.env"
+        ],
         "generatePackageJson": true,
         "esbuildOptions": {
           "sourcemap": true,
@@ -40,27 +43,20 @@
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "generic-servers:build"
+        "buildTarget": "FileServer:build"
       },
       "configurations": {
         "development": {
-          "buildTarget": "generic-servers:build:development"
+          "buildTarget": "FileServer:build:development"
         },
         "production": {
-          "buildTarget": "generic-servers:build:production"
+          "buildTarget": "FileServer:build:production"
         }
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
-    },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
-      "options": {
-        "jestConfig": "apps/generic-servers/jest.config.ts"
-      }
     }
   },
   "tags": []
