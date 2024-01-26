@@ -54,6 +54,17 @@
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
+    },
+    "pack": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/apps/server/key-value"],
+      "options": {
+        "commands": [
+          "npx nx run KeyValue:build:production",
+          "node pack.js --project=apps/server/key-value"
+        ],
+        "parallel": false
+      }
     }
   },
   "tags": []
