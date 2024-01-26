@@ -7,7 +7,9 @@ tmp
 
 # dependencies
 node_modules
-
+install-state.gz
+*-debug.*
+.yarn/cache
 # IDEs and editors
 /.idea
 .project
@@ -39,3 +41,4 @@ testem.log
 Thumbs.db
 
 .nx/cache
+.env
