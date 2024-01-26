@@ -65,9 +65,14 @@ app1.post('/get_token', (req, res) => {
   }
 });
 app1.use('**/*', (_, res) => {
-  res.send('2.0');
+  res.send(`2.0 ${process.env['NODE_ENV']}`);
 });
+
 const PORT = process.env.PORT || 3000;
-app1.listen(PORT, () => {
-  console.log(`Server is running in http://localhost:${PORT}`);
-});
+if (process.env['NODE_ENV']) {
+  app1.listen(PORT, () => {
+    console.log(`Server is running in http://localhost:${PORT}`);
+  });
+}
+
+export const web = app1;

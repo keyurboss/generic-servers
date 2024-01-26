@@ -1,23 +1,26 @@
-import {
+import firebaseAdmin, {
   app,
-  credential,
   database,
-  firestore,
-  initializeApp,
+  firestore
 } from 'firebase-admin';
 
+const FirebaseJSONString = (process.env['FIREBASE_JSON'] ?? '').replace(
+  /'/gm,
+  '"'
+);
+
 export const config = {
-//   linkMatchingRegExp: /(http[s]?:\/\/)(([\w\d]+)\.)*([\w]{2,3})(\/[^ ]*)?/m,
+  //   linkMatchingRegExp: /(http[s]?:\/\/)(([\w\d]+)\.)*([\w]{2,3})(\/[^ ]*)?/m,
   tokens: process.env['ACCESS_TOKEN_KEY'],
-  firebase_admin_sdk: JSON.parse(process.env['FIREBASE_JSON'] ?? ''),
+  firebase_admin_sdk: JSON.parse(FirebaseJSONString),
 };
 export const Firebase_Objects: {
   firebase_app?: app.App;
   firestore?: firestore.Firestore;
   realTimeDb?: database.Database;
 } = {
-  firebase_app: initializeApp({
-    credential: credential.cert({
+  firebase_app: firebaseAdmin.initializeApp({
+    credential: firebaseAdmin.credential.cert({
       clientEmail: config.firebase_admin_sdk.client_email,
       privateKey: config.firebase_admin_sdk.private_key,
       projectId: config.firebase_admin_sdk.project_id,
@@ -28,5 +31,5 @@ export const Firebase_Objects: {
   }),
 };
 
-Firebase_Objects.firestore = firestore(Firebase_Objects.firebase_app);
-Firebase_Objects.realTimeDb = database(Firebase_Objects.firebase_app);
+Firebase_Objects.firestore = firebaseAdmin.firestore(Firebase_Objects.firebase_app);
+Firebase_Objects.realTimeDb = firebaseAdmin.database(Firebase_Objects.firebase_app);
