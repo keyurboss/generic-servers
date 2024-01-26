@@ -1,0 +1,72 @@
+{
+  "name": "LinkShortener",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/server/link-shortener/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/server/link-shortener",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "apps/server/link-shortener/src/main.ts",
+        "tsConfig": "apps/server/link-shortener/tsconfig.app.json",
+        "assets": [],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "bundle": true,
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "LinkShortener:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "LinkShortener:build:development"
+        },
+        "production": {
+          "buildTarget": "LinkShortener:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "pack": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/apps/server/link-shortener"],
+      "options": {
+        "commands": [
+          "npx nx run LinkShortener:build:production",
+          "node pack.js --project=apps/server/link-shortener"
+        ],
+        "parallel": false
+      }
+    }
+  },
+  "tags": []
+}
