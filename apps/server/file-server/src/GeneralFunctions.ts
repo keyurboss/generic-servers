@@ -45,16 +45,16 @@ export function AuthMiddleWithoutReject(req, res: Response<unknown>, next) {
   const authHeader = req.headers['authorization'];
   const token1 = authHeader && authHeader.split(' ')[1];
   if (token1 == null) {
-    res.locals.islogin = false;
+    res.locals.isLogin = false;
     next();
   } else {
     AuthenticationFunction(token1)
       .then((user) => {
-        res.locals.islogin = true;
+        res.locals.isLogin = true;
         res.locals.user = user;
       })
       .catch(() => {
-        res.locals.islogin = false;
+        res.locals.isLogin = false;
       })
       .finally(() => {
         next();
