@@ -1,19 +1,16 @@
-import express from 'express';
 import cors from 'cors';
+import { randomBytes } from 'crypto';
+import express from 'express';
 import fileUpload from 'express-fileupload';
 import { join } from 'path';
-import { randomBytes } from 'crypto';
-import { config } from 'dotenv';
 import {
-  SetImmutableCacheHeader,
-  AuthenticateTokenMiddle,
-  SignDataJWT,
-  Keys,
   AuthenticateSecureFile,
+  AuthenticateTokenMiddle,
+  Keys,
   Keys1,
+  SetImmutableCacheHeader,
+  SignDataJWT,
 } from './GeneralFunctions';
-
-config();
 
 const app = express();
 app.use(express.json());

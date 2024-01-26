@@ -11,14 +11,11 @@
       "options": {
         "platform": "node",
         "outputPath": "dist/apps/server/file-server",
-        "format": ["cjs"],
+        "format": ["esm", "cjs"],
         "bundle": false,
         "main": "apps/server/file-server/src/main.ts",
         "tsConfig": "apps/server/file-server/tsconfig.app.json",
-        "assets": [
-          "apps/server/file-server/src/assets",
-          "apps/server/file-server/src/.env"
-        ],
+        "assets": [],
         "generatePackageJson": true,
         "esbuildOptions": {
           "sourcemap": true,
@@ -30,6 +27,7 @@
       "configurations": {
         "development": {},
         "production": {
+          "bundle": true,
           "esbuildOptions": {
             "sourcemap": false,
             "outExtension": {
@@ -57,6 +55,17 @@
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
+    },
+    "pack": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/apps/server/file-server"],
+      "options": {
+        "commands": [
+          "npx nx run FileServer:build:production",
+          "node pack.js --project=apps/server/file-server"
+        ],
+        "parallel": false
+      }
     }
   },
   "tags": []
