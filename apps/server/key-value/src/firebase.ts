@@ -4,10 +4,8 @@ import firebaseAdmin, {
   firestore
 } from 'firebase-admin';
 
-const FirebaseJSONString = (process.env['FIREBASE_JSON'] ?? '').replace(
-  /'/gm,
-  '"'
-);
+const FirebaseJSONString = (process.env['FIREBASE_JSON'] ?? '');
+
 
 export const config = {
   //   linkMatchingRegExp: /(http[s]?:\/\/)(([\w\d]+)\.)*([\w]{2,3})(\/[^ ]*)?/m,
