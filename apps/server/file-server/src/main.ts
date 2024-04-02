@@ -113,7 +113,7 @@ app.post(
     });
   }
 );
-app.post('/token', (req, res) => {
+app.post('/tempToken',(req,res)=>{
   const data = req.body;
   if (
     data.uname &&
@@ -123,7 +123,7 @@ app.post('/token', (req, res) => {
   ) {
     res.send({
       key: SignDataJWT({}, Keys, {
-        expiresIn: '1d',
+        expiresIn: '5m',
       }),
       key1: SignDataJWT(
         {
@@ -135,9 +135,26 @@ app.post('/token', (req, res) => {
   } else {
     res.sendStatus(403);
   }
+})
+app.post('/token', (req, res) => {
+  const data = req.body;
+  if (
+    data.uname &&
+    data.uname === process.env['USER_NAME'] &&
+    data.password &&
+    data.password === process.env['PASSWORD']
+  ) {
+    res.send({
+      key: SignDataJWT({}, Keys, {
+        expiresIn: '1d',
+      })
+    });
+  } else {
+    res.sendStatus(403);
+  }
 });
 app.use('**/*', (_, res) => {
-  res.send('2.0');
+  res.send('2.0.3');
 });
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
