@@ -1,0 +1,48 @@
+{
+  "name": "wed-invite-server",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/server/wed-invite-server/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/server/wed-invite-server",
+        "main": "apps/server/wed-invite-server/src/main.ts",
+        "tsConfig": "apps/server/wed-invite-server/tsconfig.app.json",
+        "assets": ["apps/server/wed-invite-server/src/assets"],
+        "webpackConfig": "apps/server/wed-invite-server/webpack.config.js",
+        "generatePackageJson": true
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "wed-invite-server:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "wed-invite-server:build:development"
+        },
+        "production": {
+          "buildTarget": "wed-invite-server:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}
