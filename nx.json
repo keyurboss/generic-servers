@@ -3,13 +3,8 @@
   "targetDefaults": {
     "build": {
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "production",
-        "^production"
-      ]
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
     },
     "pack": {
       "cache": true
@@ -25,10 +20,7 @@
     }
   },
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*",
-      "sharedGlobals"
-    ],
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "production": [
       "default",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
@@ -41,6 +33,7 @@
     ],
     "sharedGlobals": []
   },
-  "nxCloudAccessToken": "ZjI1ODU0ZDgtODllYy00NjdmLTkwYjctMmEyZTYzNmRmZGZjfHJlYWQtd3JpdGU=",
-  "useInferencePlugins": false
+  "nxCloudAccessToken": "MGIxMThmZWYtNWI5ZC00MzUxLTk5MjItNDM0YzUzYzQwY2JjfHJlYWQ=",
+  "useInferencePlugins": false,
+  "nxCloudId": "66fed57c9fb2c540816aaaa0"
 }
