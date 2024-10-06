@@ -5,13 +5,14 @@ import { DbConfig } from './db-config.class';
 
 @Injectable()
 export class DatabaseService {
-  dbPool!: Pool;
+  private dbPool!: Pool;
   private logger: Logger;
   constructor(@Inject(DbConfig) db: DbConfig) {
     this.logger = new Logger(this.constructor.name);
     this.dbPool = new Pool({
       host: db.host,
       port: db.port,
+      connectionLimit: 5,
       user: db.username,
       password: db.password,
       database: db.database,
@@ -21,5 +22,9 @@ export class DatabaseService {
     });
     this.logger.log('Db Pool Service Initialized');
     this.logger.debug(`Connecting to db ${this.dbPool.databasestring}`);
+  }
+
+  getDb() {
+    return this.dbPool.get_connection();
   }
 }

@@ -7,6 +7,12 @@ import { join } from 'path';
 import { validationSchema } from './validation.schema';
 import { DatabaseService, DbConfig } from './database';
 import { DbEnvService } from './env';
+import { WeddingEventController } from './wedding_events/wedding_events.controller';
+import { WeddingEventService } from './wedding_events/wedding_events.service';
+
+const controllers = [AppController, WeddingEventController];
+
+const services = [WeddingEventService, DatabaseService];
 
 @Module({
   imports: [
@@ -16,14 +22,14 @@ import { DbEnvService } from './env';
       envFilePath: join(__dirname, 'assets', '.env'),
     }),
   ],
-  controllers: [AppController],
+  controllers,
   providers: [
     AppService,
     {
       provide: DbConfig,
       useClass: DbEnvService,
     },
-    DatabaseService,
+    ...services,
   ],
 })
 export class AppModule {}
