@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { DbConfig } from '../database';
+import { DbConfig } from '@rps/nest-server-core';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()

@@ -1,3 +1,5 @@
+export const DbConfigProvider = 'DbConfigProvider';
+
 export abstract class DbConfig {
   abstract readonly host: string;
   abstract readonly port: number;

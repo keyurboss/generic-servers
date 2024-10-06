@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { DatabaseService } from '../database';
+import { DatabaseService } from '@rps/nest-server-core';
 import {
   WeddingEventType,
   weddingEventWhere,
