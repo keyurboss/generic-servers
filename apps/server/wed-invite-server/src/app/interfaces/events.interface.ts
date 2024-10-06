@@ -1,6 +1,6 @@
 import * as joi from 'joi';
 
-export type WeddingEvents = {
+export type WeddingEventType = {
   event_id: number;
   event_second_id: string;
   event_name: string;
@@ -8,7 +8,7 @@ export type WeddingEvents = {
   event_ends_at: number;
 };
 
-export type WeddingEventsWhere = {
+export type weddingEventWhere = {
   event_id?: number | number[];
   event_second_id?: string | string[];
   event_name?: string | string[];
@@ -18,7 +18,7 @@ export type WeddingEventsWhere = {
   event_ends_greater?: number;
 };
 
-export const WeddingEventTable = {
+export const weddingEventTable = {
   table_name: 'wedding_events',
   columns: {
     event_id: 'event_id',
@@ -29,10 +29,12 @@ export const WeddingEventTable = {
   },
 };
 
-export const WeddingEventValidator = {
+export const weddingEventValidator = {
   event_id: joi.number().required().min(1),
   event_second_id: joi.string().uuid().required(),
   event_name: joi.string().required().trim(),
-  event_starts_at: joi.number().required(),
-  event_ends_at: joi.number().required(),
+  event_starts_at: joi.number().min(1728212473).max(2147483647).required(),
+  event_ends_at: joi.number().min(1728212473).max(2147483647).required(),
 };
+
+export const weddingEventObjectValidator = joi.object(weddingEventValidator);

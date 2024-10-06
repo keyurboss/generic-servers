@@ -1,7 +1,23 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
+import {
+  weddingEventObjectValidator,
+  WeddingEventType,
+  weddingEventValidator,
+} from '../interfaces';
+import {
+  GetUUID,
+  TransferError,
+  TransferValidationError,
+} from '../interfaces/general.function';
 import { WeddingEventService } from './wedding_events.service';
-import { WeddingEventValidator } from '../interfaces';
-import { TransferError } from '../interfaces/general.function';
 
 @Controller('events')
 export class WeddingEventController {
@@ -15,7 +31,7 @@ export class WeddingEventController {
   getWeddingEventById(@Param('id') id: string) {
     // debugger;
     try {
-      const idResult = WeddingEventValidator.event_id.validate(id);
+      const idResult = weddingEventValidator.event_id.validate(id);
       if (idResult.error) {
         throw idResult.error.details[0];
       }
@@ -24,6 +40,47 @@ export class WeddingEventController {
       });
     } catch (error) {
       TransferError(error);
+    }
+  }
+
+  @Put('/add')
+  async addWeddingEvent(@Body() body: WeddingEventType) {
+    body.event_id = 1;
+    body.event_second_id = GetUUID();
+    const a = weddingEventObjectValidator.validate(body);
+    if (a.error) {
+      TransferValidationError(a.error.details);
+    }
+    try {
+      return await this.weddingEventService.insertWeddingEvents(a.value);
+    } catch (e) {
+      return TransferError(e);
+    }
+  }
+
+  @Post('/update')
+  async updateWeddingEvent(@Body() body: WeddingEventType) {
+    const a = weddingEventObjectValidator.validate(body);
+    if (a.error) {
+      TransferValidationError(a.error.details);
+    }
+    try {
+      return await this.weddingEventService.updateWeddingEvents(a.value);
+    } catch (e) {
+      return TransferError(e);
+    }
+  }
+
+  @Delete('/delete')
+  async deleteWeddingEvent(@Body() body: WeddingEventType) {
+    const a = weddingEventObjectValidator.validate(body);
+    if (a.error) {
+      TransferValidationError(a.error.details);
+    }
+    try {
+      return await this.weddingEventService.deleteWeddingEvents(a.value);
+    } catch (e) {
+      return TransferError(e);
     }
   }
 }
