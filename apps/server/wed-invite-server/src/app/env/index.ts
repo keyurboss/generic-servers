@@ -1,1 +1,1 @@
-export * from './db.env.service'
+export * from './db.env.service';

@@ -94,9 +94,12 @@ app.post(
     if (typeof req.files[uploadId] === 'undefined') {
       return res.status(400).send('Please Upload File Using ID');
     }
-    let customPathName = ""
-    if (typeof req.body["path"] !== 'undefined' && typeof req.body["path"] === "string"){
-      customPathName = req.body["path"]
+    let customPathName = '';
+    if (
+      typeof req.body['path'] !== 'undefined' &&
+      typeof req.body['path'] === 'string'
+    ) {
+      customPathName = req.body['path'];
     }
     const appendExt =
       typeof req.query['appendExt'] === 'undefined' ? false : true;
@@ -111,15 +114,17 @@ app.post(
     if (appendExt) {
       Filename = `${Filename}.${ext}`;
     }
-    const finalPath = join('static',customPathName,Filename)
-    
-    await uploadedFile.mv(join(__dirname,finalPath));
+    const finalPath = join('static', customPathName, Filename);
+
+    await uploadedFile.mv(join(__dirname, finalPath));
     return res.status(200).send({
-      url: `https://${req.hostname}/${finalPath.split(path.sep).join(path.posix.sep)}`,
+      url: `https://${req.hostname}/${finalPath
+        .split(path.sep)
+        .join(path.posix.sep)}`,
     });
   }
 );
-app.post('/tempToken',(req,res)=>{
+app.post('/tempToken', (req, res) => {
   const data = req.body;
   if (
     data.uname &&
@@ -141,7 +146,7 @@ app.post('/tempToken',(req,res)=>{
   } else {
     res.sendStatus(403);
   }
-})
+});
 app.post('/token', (req, res) => {
   const data = req.body;
   if (
@@ -153,7 +158,7 @@ app.post('/token', (req, res) => {
     res.send({
       key: SignDataJWT({}, Keys, {
         expiresIn: '1d',
-      })
+      }),
     });
   } else {
     res.sendStatus(403);

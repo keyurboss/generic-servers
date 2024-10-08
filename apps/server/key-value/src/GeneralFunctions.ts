@@ -3,11 +3,11 @@ import { Response } from 'express';
 import { sign, SignOptions, verify } from 'jsonwebtoken';
 
 import { config } from './firebase';
-const GlobalVar={
-  token:{
-    accessToken:config.tokens
-  }
-}
+const GlobalVar = {
+  token: {
+    accessToken: config.tokens,
+  },
+};
 export function AuthenticationFunction(token1: string) {
   return VerifyJwtToken(token1, GlobalVar.token.accessToken);
 }
@@ -20,7 +20,7 @@ export function AuthenticateTokenMiddle(req, res: Response<any>, next) {
       res.locals.user = user;
       next();
     })
-    .catch((e:never) => {
+    .catch((e: never) => {
       res.status(403).send(e);
     });
 }

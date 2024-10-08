@@ -12,7 +12,7 @@ export function TransferError(error: any, status = 400) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function TransferValidationError(error: any, status = 400) {
-  throw new HttpException({ error,status }, status);
+  throw new HttpException({ error, status }, status);
 }
 
 export function WaitForSomeTime(time: number): Promise<void> {

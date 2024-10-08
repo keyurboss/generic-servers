@@ -11,7 +11,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-
       - uses: actions/checkout@v3
       - name: ENV
         with: # Set the secret as an input
@@ -29,10 +28,10 @@ jobs:
         run: yarn install --mode skip-build
 
       - name: Lint All Projects
-        run: yarn nx run-many --target=lint 
+        run: yarn nx run-many --target=lint
 
       - name: Build All Projects
-        run: yarn nx run-many --target=build 
+        run: yarn nx run-many --target=build
 
       - name: Pack All Server
-        run: yarn nx run-many --target=pack 
+        run: yarn nx run-many --target=pack
