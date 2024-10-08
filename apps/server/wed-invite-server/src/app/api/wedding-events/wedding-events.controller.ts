@@ -11,13 +11,13 @@ import {
   weddingEventObjectValidator,
   WeddingEventType,
   weddingEventValidator,
-} from '../interfaces';
+} from '../../interfaces';
 import {
   GetUUID,
   TransferError,
   TransferValidationError,
-} from '../interfaces/general.function';
-import { WeddingEventService } from './wedding_events.service';
+} from '../../interfaces';
+import { WeddingEventService } from './wedding-events.service';
 
 @Controller('events')
 export class WeddingEventController {

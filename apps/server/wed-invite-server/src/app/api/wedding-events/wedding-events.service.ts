@@ -4,7 +4,7 @@ import {
   WeddingEventType,
   weddingEventWhere,
   weddingEventTable,
-} from '../interfaces';
+} from '../../interfaces';
 
 @Injectable()
 export class WeddingEventService {
