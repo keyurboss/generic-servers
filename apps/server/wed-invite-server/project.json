@@ -1,5 +1,5 @@
 {
-  "name": "wed-invite-server",
+  "name": "WedInviteServer",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/server/wed-invite-server/src",
   "projectType": "application",
@@ -29,20 +29,31 @@
       "defaultConfiguration": "development",
       "dependsOn": ["build"],
       "options": {
-        "buildTarget": "wed-invite-server:build",
+        "buildTarget": "WedInviteServer:build",
         "runBuildTargetDependencies": false
       },
       "configurations": {
         "development": {
-          "buildTarget": "wed-invite-server:build:development"
+          "buildTarget": "WedInviteServer:build:development"
         },
         "production": {
-          "buildTarget": "wed-invite-server:build:production"
+          "buildTarget": "WedInviteServer:build:production"
         }
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint"
+    },
+    "pack": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/apps/server/wed-invite-server"],
+      "options": {
+        "commands": [
+          "npx nx run LinkShortener:build:production",
+          "node pack.js --project=apps/server/wed-invite-server"
+        ],
+        "parallel": false
+      }
     }
   }
 }

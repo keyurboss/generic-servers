@@ -10,10 +10,14 @@ import {
   WeddingEventController,
   WeddingEventService,
 } from './api/wedding-events';
+import {
+  EventManagersController,
+  EventManagersService,
+} from './api/event-managers';
 
-const controllers = [WeddingEventController];
+const controllers = [WeddingEventController, EventManagersController];
 
-const services = [WeddingEventService];
+const services = [WeddingEventService, EventManagersService];
 
 const modules = [DatabaseModule];
 
