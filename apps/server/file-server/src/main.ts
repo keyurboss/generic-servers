@@ -2,7 +2,7 @@ import cors from 'cors';
 import { randomBytes } from 'crypto';
 import express from 'express';
 import fileUpload from 'express-fileupload';
-import { join } from 'path';
+import path, { join } from 'path';
 import {
   AuthenticateSecureFile,
   AuthenticateTokenMiddle,
@@ -29,8 +29,8 @@ app.use(
 app.use(
   '/keys',
   AuthenticateSecureFile,
-  SetImmutableCacheHeader,
-  express.static(join(__dirname, 'keys'))
+  // SetImmutableCacheHeader,
+  express.static(join(__dirname, 'secure_keys'))
 );
 app.use(
   '/booz',
@@ -94,6 +94,13 @@ app.post(
     if (typeof req.files[uploadId] === 'undefined') {
       return res.status(400).send('Please Upload File Using ID');
     }
+    let customPathName = '';
+    if (
+      typeof req.body['path'] !== 'undefined' &&
+      typeof req.body['path'] === 'string'
+    ) {
+      customPathName = req.body['path'];
+    }
     const appendExt =
       typeof req.query['appendExt'] === 'undefined' ? false : true;
     const uploadFileReqObject = req.files[uploadId];
@@ -107,13 +114,17 @@ app.post(
     if (appendExt) {
       Filename = `${Filename}.${ext}`;
     }
-    await uploadedFile.mv(__dirname + '/static/' + Filename);
+    const finalPath = join('static', customPathName, Filename);
+
+    await uploadedFile.mv(join(__dirname, finalPath));
     return res.status(200).send({
-      url: `https://${req.hostname}/static/${Filename}`,
+      url: `https://${req.hostname}/${finalPath
+        .split(path.sep)
+        .join(path.posix.sep)}`,
     });
   }
 );
-app.post('/tempToken',(req,res)=>{
+app.post('/tempToken', (req, res) => {
   const data = req.body;
   if (
     data.uname &&
@@ -135,7 +146,7 @@ app.post('/tempToken',(req,res)=>{
   } else {
     res.sendStatus(403);
   }
-})
+});
 app.post('/token', (req, res) => {
   const data = req.body;
   if (
@@ -147,7 +158,7 @@ app.post('/token', (req, res) => {
     res.send({
       key: SignDataJWT({}, Keys, {
         expiresIn: '1d',
-      })
+      }),
     });
   } else {
     res.sendStatus(403);

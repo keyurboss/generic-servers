@@ -1,7 +1,4 @@
-import firebaseAdmin, {
-  app,
-  firestore
-} from 'firebase-admin';
+import firebaseAdmin, { app, firestore } from 'firebase-admin';
 import { IdGenerator } from 'rps-unique-id-generator';
 
 const FirebaseJSONString = (process.env['FIREBASE_JSON'] ?? '').replace(
@@ -46,4 +43,6 @@ export const Firebase_Objects: {
   }),
 };
 
-Firebase_Objects.firestore = firebaseAdmin.firestore(Firebase_Objects.firebase_app);
+Firebase_Objects.firestore = firebaseAdmin.firestore(
+  Firebase_Objects.firebase_app
+);

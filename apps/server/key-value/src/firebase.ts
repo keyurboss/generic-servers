@@ -1,11 +1,6 @@
-import firebaseAdmin, {
-  app,
-  database,
-  firestore
-} from 'firebase-admin';
+import firebaseAdmin, { app, database, firestore } from 'firebase-admin';
 
-const FirebaseJSONString = (process.env['FIREBASE_JSON'] ?? '');
-
+const FirebaseJSONString = process.env['FIREBASE_JSON'] ?? '';
 
 export const config = {
   //   linkMatchingRegExp: /(http[s]?:\/\/)(([\w\d]+)\.)*([\w]{2,3})(\/[^ ]*)?/m,
@@ -29,5 +24,9 @@ export const Firebase_Objects: {
   }),
 };
 
-Firebase_Objects.firestore = firebaseAdmin.firestore(Firebase_Objects.firebase_app);
-Firebase_Objects.realTimeDb = firebaseAdmin.database(Firebase_Objects.firebase_app);
+Firebase_Objects.firestore = firebaseAdmin.firestore(
+  Firebase_Objects.firebase_app
+);
+Firebase_Objects.realTimeDb = firebaseAdmin.database(
+  Firebase_Objects.firebase_app
+);
