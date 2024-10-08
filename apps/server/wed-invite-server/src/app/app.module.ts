@@ -3,21 +3,28 @@ import { ConfigModule } from '@nestjs/config';
 
 import { DatabaseModule, DbConfigProvider } from '@rps/nest-server-core';
 import { join } from 'path';
-import { AppService } from './app.service';
-import { DbEnvService } from './env';
-import { validationSchema } from './validation.schema';
-import {
-  WeddingEventController,
-  WeddingEventService,
-} from './api/wedding-events';
 import {
   EventManagersController,
   EventManagersService,
 } from './api/event-managers';
+import {
+  WeddingEventController,
+  WeddingEventService,
+} from './api/wedding-events';
+import { AppService } from './app.service';
+import { DbEnvService } from './env';
+import { CoreEnvService } from './env/core.env.service';
+import { validationSchema } from './validation.schema';
+import { FirebaseService, TokenService } from './services';
 
 const controllers = [WeddingEventController, EventManagersController];
 
-const services = [WeddingEventService, EventManagersService];
+const services = [
+  WeddingEventService,
+  EventManagersService,
+  TokenService,
+  FirebaseService,
+];
 
 const modules = [DatabaseModule];
 
@@ -31,12 +38,13 @@ const modules = [DatabaseModule];
     }),
   ],
   providers: [
+    CoreEnvService,
     {
       provide: DbConfigProvider,
       useClass: DbEnvService,
     },
   ],
-  exports: [DbConfigProvider, ConfigModule],
+  exports: [DbConfigProvider, CoreEnvService, ConfigModule],
 })
 class GlobalDataProviderModule {}
 

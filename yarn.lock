@@ -3551,7 +3551,7 @@ __metadata:
     "@types/express": "npm:~4.17.13"
     "@types/express-fileupload": "npm:^1.4.4"
     "@types/jest": "npm:29.5.13"
-    "@types/jsonwebtoken": "npm:^9.0.5"
+    "@types/jsonwebtoken": "npm:^9.0.7"
     "@types/node": "npm:18.19.28"
     "@types/uuid": "npm:^10.0.0"
     "@typescript-eslint/eslint-plugin": "npm:7.18.0"
@@ -4095,12 +4095,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jsonwebtoken@npm:^9.0.2, @types/jsonwebtoken@npm:^9.0.5":
+"@types/jsonwebtoken@npm:^9.0.2":
   version: 9.0.5
   resolution: "@types/jsonwebtoken@npm:9.0.5"
   dependencies:
     "@types/node": "npm:*"
   checksum: 10c0/c582b8420586f3b9550f7e34992cb32be300bc953636f3b087ed9c180ce7ea5c2e4b35090be2d57f0d3168cc3ca1074932907caa2afe09f4e9c84cf5c0daefa8
+  languageName: node
+  linkType: hard
+
+"@types/jsonwebtoken@npm:^9.0.7":
+  version: 9.0.7
+  resolution: "@types/jsonwebtoken@npm:9.0.7"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/e1cd0e48fcae21b1d4378887a23453bd7212b480a131b11bcda2cdeb0687d03c9646ee5ba592e04cfaf76f7cc80f179950e627cdb3ebc90a5923bce49a35631a
   languageName: node
   linkType: hard
 
