@@ -1,10 +1,7 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import {
-  DatabaseModule,
-  DbConfigProvider
-} from '@rps/nest-server-core';
+import { DatabaseModule, DbConfigProvider } from '@rps/nest-server-core';
 import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -19,6 +16,7 @@ const services = [WeddingEventService];
 
 const modules = [DatabaseModule];
 
+@Global()
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -26,18 +24,20 @@ const modules = [DatabaseModule];
       validationSchema,
       envFilePath: join(__dirname, 'assets', '.env'),
     }),
-    ...modules,
   ],
-  controllers,
   providers: [
-    AppService,
     {
       provide: DbConfigProvider,
       useClass: DbEnvService,
-      // durable: true,
-      // scope: Scope.DEFAULT,
     },
-    ...services,
   ],
+  exports: [DbConfigProvider, ConfigModule],
+})
+class GlobalDataProviderModule {}
+
+@Module({
+  imports: [GlobalDataProviderModule, ...modules],
+  controllers,
+  providers: [AppService, ...services],
 })
 export class AppModule {}

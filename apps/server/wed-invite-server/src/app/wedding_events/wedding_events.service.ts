@@ -13,7 +13,7 @@ export class WeddingEventService {
     this.logger = new Logger(this.constructor.name);
   }
 
-  async getWeddingEvents(where?: weddingEventWhere) {
+  async getWeddingEvents(where?: weddingEventWhere):Promise<Array<WeddingEventType>> {
     this.logger.debug(`getWeddingEvents where: ${JSON.stringify(where)}`);
     this.logger.debug('Getting Connection');
     const db = await this.dbService.getDb();
@@ -55,6 +55,18 @@ export class WeddingEventService {
             }
           } else {
             db.where(weddingEventTable.columns.event_name, where.event_name);
+          }
+        }
+        if (where.event_short_name) {
+          if (Array.isArray(where.event_short_name)) {
+            if (where.event_short_name.length > 0) {
+              db.where_in(
+                weddingEventTable.columns.event_short_name,
+                where.event_short_name
+              );
+            }
+          } else {
+            db.where(weddingEventTable.columns.event_short_name, where.event_short_name);
           }
         }
 

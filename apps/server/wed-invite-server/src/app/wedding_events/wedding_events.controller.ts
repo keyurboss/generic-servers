@@ -22,6 +22,26 @@ import { WeddingEventService } from './wedding_events.service';
 @Controller('events')
 export class WeddingEventController {
   constructor(private weddingEventService: WeddingEventService) {}
+  @Get('/short/:name')
+  async getWeddingEventByShortName(@Param('name') name: string) {
+    // debugger;
+    try {
+      const eventName = weddingEventValidator.event_short_name.validate(name);
+      if (eventName.error) {
+        throw eventName.error.details[0];
+      }
+      const result = await this.weddingEventService.getWeddingEvents({
+        event_short_name: eventName.value,
+      });
+      return {
+        success: result.length === 1 ? true : false,
+        result: result.length === 1 ? result[0] : null,
+      };
+    } catch (error) {
+      TransferError(error);
+    }
+  }
+
   @Get('/')
   getWeddingEvents() {
     return this.weddingEventService.getWeddingEvents();
