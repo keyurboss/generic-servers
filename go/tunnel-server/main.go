@@ -21,8 +21,8 @@ import (
 )
 
 type (
-	myService struct{}
-	Config    struct {
+	tunnelService struct{}
+	Config        struct {
 		ServerIp           string         `json:"serverIp" validate:"required"`
 		ServerPort         int            `json:"serverPort" validate:"required,port"`
 		RemoteTunnelConfig []TunnelConfig `json:"remoteTunnelConfig" validate:"required,min=1"`
@@ -34,19 +34,21 @@ type (
 )
 
 var (
-	Client        *chclient.Client
-	ChiselContext context.Context
+	Client          *chclient.Client
+	ChiselContext   context.Context
+	ShouldBeRunning = false
 )
 
-func (m *myService) Execute(args []string, r chan svc.ChangeRequest, status chan<- svc.Status) (bool, uint32) {
+func (m *tunnelService) Execute(args []string, r chan svc.ChangeRequest, status chan<- svc.Status) (bool, uint32) {
 
 	const cmdsAccepted = svc.AcceptStop | svc.AcceptShutdown | svc.AcceptPauseAndContinue
-	tick := time.Tick(5 * time.Second)
+	tick := time.Tick(30 * time.Second)
 
 	status <- svc.Status{State: svc.StartPending}
 
 	status <- svc.Status{State: svc.Running, Accepts: cmdsAccepted}
 	if IsDebug() {
+		log.Print("In Debug Mode")
 		go func() {
 			time.Sleep(15 * time.Second)
 			r <- svc.ChangeRequest{Cmd: svc.Pause, CurrentStatus: svc.Status{State: svc.Paused}}
@@ -94,12 +96,12 @@ loop:
 
 func runService(name string, isDebug bool) {
 	if isDebug {
-		err := debug.Run(name, &myService{})
+		err := debug.Run(name, &tunnelService{})
 		if err != nil {
 			log.Fatalln("Error running service in debug mode.")
 		}
 	} else {
-		err := svc.Run(name, &myService{})
+		err := svc.Run(name, &tunnelService{})
 		if err != nil {
 			log.Fatalln("Error running service in Service Control mode.")
 		}
@@ -107,15 +109,16 @@ func runService(name string, isDebug bool) {
 }
 
 func main() {
-	start()
-	f, err := os.OpenFile(filepath.Join(FindAndReturnCurrentDir(), "debug.log"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalln(fmt.Errorf("error opening file: %v", err))
-	}
-	defer f.Close()
+	// f, err := os.OpenFile(filepath.Join(FindAndReturnCurrentDir(), "debug.log"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	// if err != nil {
+	// 	log.Fatalln(fmt.Errorf("error opening file: %v", err))
+	// }
+	// defer f.Close()
 
-	log.SetOutput(f)
-	runService("myservice", IsDebug())
+	// log.SetOutput(f)
+	start()
+	runService("tunnelService", IsDebug())
+	log.Print("Finished Function")
 }
 
 func start() {
@@ -142,8 +145,10 @@ func start() {
 	}
 	chshare.BuildVersion = "1.9.1"
 	client, err := chclient.NewClient(&chclient.Config{
-		Remotes: remote,
-		Server:  fmt.Sprintf("%s:%d", ThisConfig.ServerIp, ThisConfig.ServerPort),
+		Remotes:          remote,
+		MaxRetryCount:    100,
+		MaxRetryInterval: 60 * time.Minute,
+		Server:           fmt.Sprintf("%s:%d", ThisConfig.ServerIp, ThisConfig.ServerPort),
 	})
 	if err != nil {
 		log.Print(err.Error())
@@ -153,10 +158,17 @@ func start() {
 }
 
 func StartChisel() {
-	Client.Start(ChiselContext)
-	log.Print("Chisel Started...!")
+	ShouldBeRunning = true
+	go func() {
+		for !ShouldBeRunning {
+			log.Print("Chisel Started...!")
+			Client.Run()
+			log.Print("Chisel Stopped...!")
+		}
+	}()
 }
 func StopChisel() {
+	ShouldBeRunning = false
 	Client.Close()
 	log.Print("Chisel Stopped...!")
 }
