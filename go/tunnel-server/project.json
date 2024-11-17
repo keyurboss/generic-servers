@@ -1,12 +1,18 @@
 {
-  "name": "GoValidator",
+  "name": "GoTunnelServer",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "sourceRoot": "go/validator",
+  "sourceRoot": "go/tunnel-server",
   "tags": [],
   "targets": {
     "test": {
       "executor": "@nx-go/nx-go:test"
+    },
+    "build": {
+      "executor": "@nx-go/nx-go:build",
+      "options": {
+        "main": "{projectRoot}/main.go"
+      }
     },
     "lint": {
       "executor": "@nx-go/nx-go:lint"

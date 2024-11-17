@@ -1,8 +1,8 @@
 {
-  "name": "GoValidator",
+  "name": "GoBackgroundService",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "library",
-  "sourceRoot": "go/validator",
+  "sourceRoot": "go/background-service",
   "tags": [],
   "targets": {
     "test": {
