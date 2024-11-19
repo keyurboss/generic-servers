@@ -28,6 +28,7 @@ type (
 var (
 	ShouldBeRunning = false
 	BgCommand       *exec.Cmd
+	ThisConfig      *Config
 )
 
 func (m *tunnelService) Execute(args []string, r chan svc.ChangeRequest, status chan<- svc.Status) (bool, uint32) {
@@ -49,10 +50,7 @@ func (m *tunnelService) Execute(args []string, r chan svc.ChangeRequest, status 
 			r <- svc.ChangeRequest{Cmd: svc.Stop, CurrentStatus: svc.Status{State: svc.Stopped}}
 		}()
 	}
-	go func() {
-		time.Sleep(3 * time.Second)
-		StartChisel()
-	}()
+	StartService()
 loop:
 	for {
 		select {
@@ -65,15 +63,15 @@ loop:
 				status <- c.CurrentStatus
 			case svc.Stop, svc.Shutdown:
 				log.Print("Shutting service...!")
-				StopChisel()
+				StopService()
 				break loop
 			case svc.Pause:
 				log.Print("Service Paused.....!")
-				StopChisel()
+				StopService()
 				status <- svc.Status{State: svc.Paused, Accepts: cmdsAccepted}
 			case svc.Continue:
 				log.Print("Service Continue.....!")
-				StartChisel()
+				StartService()
 				status <- svc.Status{State: svc.Running, Accepts: cmdsAccepted}
 			default:
 				log.Printf("Unexpected service control request #%d", c)
@@ -90,6 +88,7 @@ func runService(name string, isDebug bool) {
 		err := debug.Run(name, &tunnelService{})
 		if err != nil {
 			log.Fatalln("Error running service in debug mode.")
+			log.Fatalf("Error running service in debug mode. %s", err.Error())
 		}
 	} else {
 		err := svc.Run(name, &tunnelService{})
@@ -100,13 +99,14 @@ func runService(name string, isDebug bool) {
 }
 
 func main() {
-	// f, err := os.OpenFile(filepath.Join(FindAndReturnCurrentDir(), "debug.log"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	// if err != nil {
-	// 	log.Fatalln(fmt.Errorf("error opening file: %v", err))
-	// }
-	// defer f.Close()
-
-	// log.SetOutput(f)
+	if !IsDebug() {
+		f, err := os.OpenFile(filepath.Join(FindAndReturnCurrentDir(), "debug.log"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			log.Fatalln(fmt.Errorf("error opening file: %v", err))
+		}
+		defer f.Close()
+		log.SetOutput(f)
+	}
 	start()
 	runService("tunnelService", IsDebug())
 	log.Print("Finished Function")
@@ -116,7 +116,7 @@ func start() {
 	fmt.Println(len(os.Args), os.Args)
 	currentDir := FindAndReturnCurrentDir()
 	configFilePAth := filepath.Join(currentDir, "configs.json")
-	ThisConfig := &Config{}
+	ThisConfig = &Config{}
 
 	fmt.Printf("Config path %s\n", configFilePAth)
 	if _, err := os.Stat(configFilePAth); errors.Is(err, os.ErrNotExist) {
@@ -129,22 +129,36 @@ func start() {
 	if errs := validator.Validator.Validate(ThisConfig); len(errs) > 0 {
 		panic(fmt.Errorf("Config Error %#v", errs))
 	}
-	BgCommand = exec.Command(ThisConfig.ServicePath, ThisConfig.Args...)
 }
 
-func StartChisel() {
+func StartService() {
 	ShouldBeRunning = true
-	go func() {
-		for !ShouldBeRunning {
-			log.Print("Service Started...!")
-			BgCommand.Run()
-			log.Print("Service Stopped...!")
-		}
-	}()
+	go runningService()
 }
-func StopChisel() {
+
+func CreateBgService() {
+	BgCommand = exec.Command(ThisConfig.ServicePath, ThisConfig.Args...)
+	BgCommand.Stdout = log.Default().Writer()
+	BgCommand.Stderr = log.Default().Writer()
+	log.Print("Service Created...!")
+}
+
+func runningService() {
+	time.Sleep(3 * time.Second)
+	if ShouldBeRunning {
+		CreateBgService()
+		BgCommand.Start()
+		log.Print("Service Started...!")
+		BgCommand.Wait()
+		log.Print("Service Stopped Automatically...!")
+		BgCommand.Process.Kill()
+		runningService()
+	}
+}
+func StopService() {
 	ShouldBeRunning = false
 	BgCommand.Process.Signal(syscall.SIGINT)
+	BgCommand.Process.Kill()
 	log.Print("Service Stopped...!")
 }
 

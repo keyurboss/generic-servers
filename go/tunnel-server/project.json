@@ -8,7 +8,7 @@
     "test": {
       "executor": "@nx-go/nx-go:test"
     },
-    "build": {
+    "build:windows": {
       "executor": "@nx-go/nx-go:build",
       "options": {
         "main": "{projectRoot}/main.go"

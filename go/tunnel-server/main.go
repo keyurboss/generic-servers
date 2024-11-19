@@ -47,6 +47,8 @@ func (m *tunnelService) Execute(args []string, r chan svc.ChangeRequest, status 
 	status <- svc.Status{State: svc.StartPending}
 
 	status <- svc.Status{State: svc.Running, Accepts: cmdsAccepted}
+	StartChisel()
+
 	if IsDebug() {
 		log.Print("In Debug Mode")
 		go func() {
@@ -58,10 +60,6 @@ func (m *tunnelService) Execute(args []string, r chan svc.ChangeRequest, status 
 			r <- svc.ChangeRequest{Cmd: svc.Stop, CurrentStatus: svc.Status{State: svc.Stopped}}
 		}()
 	}
-	go func() {
-		time.Sleep(3 * time.Second)
-		StartChisel()
-	}()
 loop:
 	for {
 		select {
@@ -109,13 +107,13 @@ func runService(name string, isDebug bool) {
 }
 
 func main() {
-	// f, err := os.OpenFile(filepath.Join(FindAndReturnCurrentDir(), "debug.log"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	// if err != nil {
-	// 	log.Fatalln(fmt.Errorf("error opening file: %v", err))
-	// }
-	// defer f.Close()
+	f, err := os.OpenFile(filepath.Join(FindAndReturnCurrentDir(), "debug.log"), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalln(fmt.Errorf("error opening file: %v", err))
+	}
+	defer f.Close()
 
-	// log.SetOutput(f)
+	log.SetOutput(f)
 	start()
 	runService("tunnelService", IsDebug())
 	log.Print("Finished Function")
@@ -159,14 +157,20 @@ func start() {
 
 func StartChisel() {
 	ShouldBeRunning = true
-	go func() {
-		for !ShouldBeRunning {
-			log.Print("Chisel Started...!")
-			Client.Run()
-			log.Print("Chisel Stopped...!")
-		}
-	}()
+	go runningChisel()
 }
+
+func runningChisel() {
+	time.Sleep(3 * time.Second)
+	if ShouldBeRunning {
+		log.Print("Chisel Started...!")
+		Client.Start(ChiselContext)
+		Client.Wait()
+		log.Print("Chisel Stopped...!")
+		runningChisel()
+	}
+}
+
 func StopChisel() {
 	ShouldBeRunning = false
 	Client.Close()
